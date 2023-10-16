@@ -1,5 +1,6 @@
 package com.petlink
 
+import com.petlink.database.DatabaseFactory
 import com.petlink.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -11,6 +12,7 @@ fun main() {
 }
 
 fun Application.module() {
+    DatabaseFactory.init()
     configureSerialization()
     configureRouting()
 }

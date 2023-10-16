@@ -1,13 +1,17 @@
 package com.petlink.plugins
 
+import com.petlink.routes.petsRouting
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
+        route("/petlink"){
+            petsRouting()
+            get {
+                call.respondText("Welcome Welcome")
+            }
         }
     }
 }
