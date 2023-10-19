@@ -1,7 +1,9 @@
 package com.petlink.models
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 
+@Serializable
 data class Pet(
     val id:Int,
     val userId:Int,

@@ -9,6 +9,11 @@ val petsRepository = PetsRepository()
 
 fun Route.petsRouting(){
     route("/pets"){
+        get{
+            val pets = petsRepository.getPets()
+            call.respond(pets)
+        }
+
         get("/inadoption"){
             val petsInAdoption = petsRepository.getPetsInAdoption()
             call.respond(petsInAdoption)
