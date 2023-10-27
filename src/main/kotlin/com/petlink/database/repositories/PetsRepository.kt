@@ -21,7 +21,6 @@ class PetsRepository : PetsDAO {
     )
 
     override suspend fun insertPet(
-        id: Int,
         userId: Int,
         inAdoption: Boolean,
         name: String,
@@ -33,7 +32,6 @@ class PetsRepository : PetsDAO {
         imgId: String
     ): Pet? = dbQuery{
         val insertStatement = Pets.insert {
-            it[Pets.id] = id
             it[Pets.userId] = userId
             it[Pets.inAdoption] = inAdoption
             it[Pets.name] = name
