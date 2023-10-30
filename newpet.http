@@ -1,0 +1,29 @@
+POST http://127.0.0.1:8080/pets
+Content-Type: application/json
+
+{
+  "id": 150,
+  "userId": 2,
+  "inAdoption": true,
+  "name": "csdacsa",
+  "type": "dog",
+  "gender": "female",
+  "breed": "pitbull",
+  "castrated": false,
+  "medHistId": "cdsacasd",
+  "imgId": "csdcasaw"
+}
+
+###
+POST http://127.0.0.1:8080/users
+Content-Type: application/json
+
+{
+  "id": 123,
+  "name": "John Doe",
+  "dni": "12345678A",
+  "email": "johndoe@example.com",
+  "password": "secretpassword",
+  "phone": "1234567890",
+  "imgprofile": "profile.jpg"
+}
