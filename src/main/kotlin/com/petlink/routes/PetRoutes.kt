@@ -2,6 +2,7 @@ package com.petlink.routes
 
 import com.petlink.database.repositories.PetsRepository
 import com.petlink.models.Pet
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -19,6 +20,15 @@ fun Route.petsRouting(){
         get("/inadoption"){
             val petsInAdoption = petsRepository.getPetsInAdoption()
             call.respond(petsInAdoption)
+        }
+
+        get("{userId?}"){
+            if (call.parameters["userId"].isNullOrBlank()) {
+                return@get call.respondText("Missing ID", status = HttpStatusCode.BadRequest)
+            }
+            val id = call.parameters["userId"]
+            val petsByUserId = petsRepository.getPetsByUserId(id!!.toInt())
+            call.respond(petsByUserId)
         }
 
         post {

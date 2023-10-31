@@ -6,7 +6,7 @@ import com.petlink.models.Pet
 import com.petlink.models.Pets
 import org.jetbrains.exposed.sql.*
 
-class PetsRepository : PetsDAO {
+class   PetsRepository : PetsDAO {
     private fun resultRowToPet(row: ResultRow) = Pet(
         id = row[Pets.id],
         userId = row[Pets.userId],
@@ -51,5 +51,9 @@ class PetsRepository : PetsDAO {
 
     override suspend fun getPetsInAdoption(): List<Pet> = dbQuery {
         Pets.select { Pets.inAdoption eq Op.TRUE }.map(::resultRowToPet)
+    }
+
+    override suspend fun getPetsByUserId(userId: Int): List<Pet> = dbQuery {
+        Pets.select {Pets.userId eq userId}.map(::resultRowToPet)
     }
 }
