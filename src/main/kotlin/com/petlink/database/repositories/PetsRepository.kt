@@ -43,7 +43,6 @@ class PetsRepository : PetsDAO {
             it[Pets.imgId] = imgId
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToPet)
-
     }
 
     override suspend fun getPets(): List<Pet> = dbQuery{

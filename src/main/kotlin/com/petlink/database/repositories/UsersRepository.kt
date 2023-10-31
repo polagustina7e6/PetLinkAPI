@@ -1,6 +1,7 @@
 package com.petlink.database.repositories
 
 import com.petlink.database.DatabaseFactory
+import com.petlink.database.DatabaseFactory.dbQuery
 import com.petlink.database.dao.UsersDAO
 import com.petlink.models.Pet
 import com.petlink.models.Pets
@@ -8,6 +9,7 @@ import com.petlink.models.User
 import com.petlink.models.Users
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 
 class UsersRepository: UsersDAO {
     private fun resultRowToUser(row: ResultRow) = User(
@@ -39,8 +41,8 @@ class UsersRepository: UsersDAO {
 
     }
 
-    override suspend fun getUsers(): List<User> {
-        TODO("Not yet implemented")
+    override suspend fun getUsers(): List<User> = dbQuery{
+        Users.selectAll().map(::resultRowToUser)
     }
 
 }

@@ -21,7 +21,6 @@ fun Route.usersRouting(){
 
         post {
             val newUser = call.receive<User>()
-
             usersRepository.insertUser(
                 name= newUser.name,
                 dni= newUser.dni,
