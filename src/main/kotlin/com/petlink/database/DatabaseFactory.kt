@@ -27,7 +27,6 @@ object DatabaseFactory {
             block()
         }
     }
-
 }
 
 /*

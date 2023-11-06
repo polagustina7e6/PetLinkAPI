@@ -9,6 +9,7 @@ import com.petlink.models.User
 import com.petlink.models.Users
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class UsersRepository: UsersDAO {
@@ -44,5 +45,15 @@ class UsersRepository: UsersDAO {
     override suspend fun getUsers(): List<User> = dbQuery{
         Users.selectAll().map(::resultRowToUser)
     }
+
+    suspend fun getUserByEmail(email: String): User? = DatabaseFactory.dbQuery {
+        Users.select { Users.email eq email }.mapNotNull { resultRowToUser(it) }.singleOrNull()
+    }
+
+    suspend fun verifyUserCredentials(email: String, password: String): Boolean {
+        val user = getUserByEmail(email)
+        return user?.password == password
+    }
+
 
 }
