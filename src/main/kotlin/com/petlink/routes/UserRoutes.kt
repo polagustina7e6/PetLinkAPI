@@ -36,7 +36,7 @@ fun Route.usersRouting(){
             val loginRequest = call.receive<UserAuth>()
             if (usersRepository.verifyUserCredentials(loginRequest.email, loginRequest.password)) {
                 // Credenciales válidas, puedes generar un token JWT aquí
-                call.respondText("Inicio de sesión correcto")
+                call.respondText("Inicio de sesión correcto!")
             } else {
                 call.respondText("Credenciales incorrectas", status = HttpStatusCode.Unauthorized)
             }
