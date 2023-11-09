@@ -7,6 +7,7 @@ val postgresql_driver_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.10"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.ktor.plugin") version "2.3.5"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
 }
@@ -15,14 +16,14 @@ group = "com.petlink"
 version = "0.0.1"
 
 application {
-    mainClass.set("com.petlink.ApplicationKt")
-
+    mainClass.set("io.ktor.server.netty.EngineMain")
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
 dependencies {
@@ -38,4 +39,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("com.h2database:h2:$h2_version")
     implementation("org.postgresql:postgresql:$postgresql_driver_version")
+
+    implementation("io.ktor:ktor-server-core:2.0.3")
+    implementation("io.ktor:ktor-server-netty:2.0.3")
+    implementation("ch.qos.logback:logback-classic:1.2.1")
 }
