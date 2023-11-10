@@ -27,6 +27,9 @@ repositories {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-jackson:1.6.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
@@ -39,6 +42,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("com.h2database:h2:$h2_version")
     implementation("org.postgresql:postgresql:$postgresql_driver_version")
+
 
     implementation("io.ktor:ktor-server-core:2.0.3")
     implementation("io.ktor:ktor-server-netty:2.0.3")

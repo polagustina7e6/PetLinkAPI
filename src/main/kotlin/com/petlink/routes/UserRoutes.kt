@@ -1,11 +1,8 @@
 package com.petlink.routes
 
-import com.petlink.database.repositories.PetsRepository
 import com.petlink.database.repositories.UsersRepository
-import com.petlink.models.Pet
 import com.petlink.models.User
 import com.petlink.models.UserAuth
-import com.petlink.models.Users
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -25,21 +22,43 @@ fun Route.usersRouting(){
             usersRepository.insertUser(
                 name= newUser.name,
                 dni= newUser.dni,
-                email = newUser.email,
-                password= newUser.password,
                 phone= newUser.phone,
-                imgprofile= newUser.imgprofile
+                email = newUser.email,
+                password = newUser.password,
+                imgprofile = newUser.imgProfile
             )
             call.respondText("S'ha registrat correctament")
         }
         post("/login") {
             val loginRequest = call.receive<UserAuth>()
-            if (usersRepository.verifyUserCredentials(loginRequest.email, loginRequest.password)) {
-                // Credenciales válidas, puedes generar un token JWT aquí
-                call.respondText("Inicio de sesión correcto!")
+
+            if (loginRequest.email.isNotBlank() && loginRequest.password.isNotBlank()) {
+                if (usersRepository.verifyUserCredentials(loginRequest.email, loginRequest.password)) {
+                    call.respondText("Inicio de sesión correcto!")
+                } else {
+                    call.respondText("Credenciales incorrectas", status = HttpStatusCode.Unauthorized)
+                }
             } else {
-                call.respondText("Credenciales incorrectas", status = HttpStatusCode.Unauthorized)
+                call.respondText("Datos de inicio de sesión incorrectos", status = HttpStatusCode.BadRequest)
             }
+        }
+
+        get("name/{email?}"){
+            if (call.parameters["email"].isNullOrBlank()) {
+                return@get call.respondText("Missing EMAIL", status = HttpStatusCode.BadRequest)
+            }
+            val id = call.parameters["email"]!!
+            val nameByEmail = usersRepository.getNameByEmail(id)
+            call.respond(nameByEmail)
+        }
+
+        get("id/{email?}"){
+            if (call.parameters["email"].isNullOrBlank()) {
+                return@get call.respondText("Missing EMAIL", status = HttpStatusCode.BadRequest)
+            }
+            val email = call.parameters["email"]!!
+            val nameByEmail = usersRepository.getIdByEmail(email)
+            call.respond(nameByEmail)
         }
     }
 }
