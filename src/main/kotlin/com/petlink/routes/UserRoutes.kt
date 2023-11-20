@@ -1,8 +1,11 @@
 package com.petlink.routes
 
+import com.petlink.database.repositories.PetsRepository
 import com.petlink.database.repositories.UsersRepository
+import com.petlink.models.Pet
 import com.petlink.models.User
 import com.petlink.models.UserAuth
+import com.petlink.models.Users
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -22,27 +25,21 @@ fun Route.usersRouting(){
             usersRepository.insertUser(
                 name= newUser.name,
                 dni= newUser.dni,
-                phone= newUser.phone,
                 email = newUser.email,
-                password = newUser.password,
-                imgprofile = newUser.imgProfile
+                password= newUser.password,
+                phone= newUser.phone,
+                imgprofile= newUser.imgProfile
             )
             call.respondText("S'ha registrat correctament")
         }
         post("/login") {
             val loginRequest = call.receive<UserAuth>()
-
-            if (loginRequest.email.isNotBlank() && loginRequest.password.isNotBlank()) {
-                if (usersRepository.verifyUserCredentials(loginRequest.email, loginRequest.password)) {
-                    call.respondText("Inicio de sesión correcto!")
-                } else {
-                    call.respondText("Credenciales incorrectas", status = HttpStatusCode.Unauthorized)
-                }
+            if (usersRepository.verifyUserCredentials(loginRequest.email, loginRequest.password)) {
+                call.respondText("Inicio de sesión correcto!")
             } else {
-                call.respondText("Datos de inicio de sesión incorrectos", status = HttpStatusCode.BadRequest)
+                call.respondText("Credenciales incorrectas", status = HttpStatusCode.Unauthorized)
             }
         }
-
         get("name/{email?}"){
             if (call.parameters["email"].isNullOrBlank()) {
                 return@get call.respondText("Missing EMAIL", status = HttpStatusCode.BadRequest)

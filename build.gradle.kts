@@ -47,4 +47,6 @@ dependencies {
     implementation("io.ktor:ktor-server-core:2.0.3")
     implementation("io.ktor:ktor-server-netty:2.0.3")
     implementation("ch.qos.logback:logback-classic:1.2.1")
+
+    implementation("org.mindrot:jbcrypt:0.4")
 }

@@ -45,7 +45,15 @@ fun Route.petsRouting(){
                 medHistId = newPet.medHistId,
                 imgId = newPet.imgId
             )
-            call.respondText("S'ha registrat correctament")
+            call.respondText("Se ha registrado correctamente")
+        }
+        get("/bybreed/{breed}") {
+            val breed = call.parameters["breed"]
+            if (breed.isNullOrBlank()) {
+                return@get call.respondText("Missing breed parameter", status = HttpStatusCode.BadRequest)
+            }
+            val petsByBreed = petsRepository.getPetsByBreed(breed.lowercase())
+            call.respond(petsByBreed)
         }
     }
-}
+    }

@@ -56,4 +56,7 @@ class   PetsRepository : PetsDAO {
     override suspend fun getPetsByUserId(userId: Int): List<Pet> = dbQuery {
         Pets.select {Pets.userId eq userId}.map(::resultRowToPet)
     }
+    suspend fun getPetsByBreed(breed: String): List<Pet> = dbQuery {
+        Pets.select { Pets.breed.lowerCase() like "%${breed.lowercase()}%" }.map(::resultRowToPet)
+    }
 }
