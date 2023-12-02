@@ -27,11 +27,6 @@ class PetsRepository : PetsDAO {
         medHistId = row[Pets.medHistId],
         imgId = row[Pets.imgId]
     )
-    private fun resultRowToAdoptionRequest(row: ResultRow) = AdoptionRequest(
-        id = row[AdoptionRequests.id],
-        fullname = row[AdoptionRequests.fullname],
-        petId = row[AdoptionRequests.petId]
-    )
 
     override suspend fun insertPet(
         userId: Int,
@@ -73,15 +68,5 @@ class PetsRepository : PetsDAO {
         Pets.select { Pets.breed.lowerCase() like "%${breed.lowercase()}%" }.map(::resultRowToPet)
     }
 
-    override suspend fun insertAdoptionRequest(fullname: String, petId: Int): AdoptionRequest? = dbQuery {
-        val insertStatement = AdoptionRequests.insert {
-            it[AdoptionRequests.fullname] = fullname
-            it[AdoptionRequests.petId] = petId
-        }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToAdoptionRequest)
-    }
-    override suspend fun getAdoptionRequestsForPet(petId: Int): List<String> = dbQuery {
-        AdoptionRequests.select { AdoptionRequests.petId eq petId }
-            .map { it[AdoptionRequests.fullname] }
-    }
+
 }

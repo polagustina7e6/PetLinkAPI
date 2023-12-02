@@ -18,7 +18,6 @@ interface PetsDAO {
     suspend fun getPets(): List<Pet>
     suspend fun getPetsInAdoption(): List<Pet>
     suspend fun getPetsByUserId(userId: Int): List<Pet>
-    suspend fun insertAdoptionRequest(fullname: String, petId: Int): AdoptionRequest?
-    suspend fun getAdoptionRequestsForPet(petId: Int): List<String>
+
 
 }
