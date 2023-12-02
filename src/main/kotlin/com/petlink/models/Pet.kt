@@ -29,5 +29,6 @@ object Pets : Table(){
     val medHistId = varchar("pet_med_hist_id", 50)
     val imgId = varchar("pet_img_id", 255)
 
+
     override val primaryKey = PrimaryKey(id)
 }

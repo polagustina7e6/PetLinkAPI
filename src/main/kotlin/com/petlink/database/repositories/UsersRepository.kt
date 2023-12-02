@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class UsersRepository: UsersDAO {
-    private fun resultRowToUser(row: ResultRow) = User(
+    fun resultRowToUser(row: ResultRow) = User(
         id = row[Users.id],
         name = row[Users.name],
         dni = row[Users.dni],
@@ -44,7 +44,7 @@ class UsersRepository: UsersDAO {
         Users.selectAll().map(::resultRowToUser)
     }
 
-    suspend fun getUserByEmail(email: String): User? = DatabaseFactory.dbQuery {
+    suspend fun getUserByEmail(email: String): User? = dbQuery {
         Users.select { Users.email eq email }.mapNotNull { resultRowToUser(it) }.singleOrNull()
     }
 

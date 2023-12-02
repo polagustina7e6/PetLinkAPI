@@ -2,11 +2,19 @@ package com.petlink.database.repositories
 
 import com.petlink.database.DatabaseFactory.dbQuery
 import com.petlink.database.dao.PetsDAO
+import com.petlink.models.AdoptionRequest
+import com.petlink.models.AdoptionRequests
+
 import com.petlink.models.Pet
 import com.petlink.models.Pets
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
 import org.jetbrains.exposed.sql.*
 
-class   PetsRepository : PetsDAO {
+class PetsRepository : PetsDAO {
     private fun resultRowToPet(row: ResultRow) = Pet(
         id = row[Pets.id],
         userId = row[Pets.userId],
@@ -18,6 +26,11 @@ class   PetsRepository : PetsDAO {
         castrated = row[Pets.castrated],
         medHistId = row[Pets.medHistId],
         imgId = row[Pets.imgId]
+    )
+    private fun resultRowToAdoptionRequest(row: ResultRow) = AdoptionRequest(
+        id = row[AdoptionRequests.id],
+        fullname = row[AdoptionRequests.fullname],
+        petId = row[AdoptionRequests.petId]
     )
 
     override suspend fun insertPet(
@@ -58,5 +71,17 @@ class   PetsRepository : PetsDAO {
     }
     suspend fun getPetsByBreed(breed: String): List<Pet> = dbQuery {
         Pets.select { Pets.breed.lowerCase() like "%${breed.lowercase()}%" }.map(::resultRowToPet)
+    }
+
+    override suspend fun insertAdoptionRequest(fullname: String, petId: Int): AdoptionRequest? = dbQuery {
+        val insertStatement = AdoptionRequests.insert {
+            it[AdoptionRequests.fullname] = fullname
+            it[AdoptionRequests.petId] = petId
+        }
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToAdoptionRequest)
+    }
+    override suspend fun getAdoptionRequestsForPet(petId: Int): List<String> = dbQuery {
+        AdoptionRequests.select { AdoptionRequests.petId eq petId }
+            .map { it[AdoptionRequests.fullname] }
     }
 }

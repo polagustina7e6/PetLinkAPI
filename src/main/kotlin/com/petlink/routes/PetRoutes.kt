@@ -1,6 +1,8 @@
 package com.petlink.routes
 
+
 import com.petlink.database.repositories.PetsRepository
+import com.petlink.models.AdoptionRequest
 import com.petlink.models.Pet
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -55,5 +57,24 @@ fun Route.petsRouting(){
             val petsByBreed = petsRepository.getPetsByBreed(breed.lowercase())
             call.respond(petsByBreed)
         }
+        post("/adoptionrequests") {
+            val request = call.receive<AdoptionRequest>()
+            val result = petsRepository.insertAdoptionRequest(request.fullname, request.petId)
+            if (result != null) {
+                call.respondText("Adoption request added successfully")
+            } else {
+                call.respondText("Failed to add adoption request", status = HttpStatusCode.InternalServerError)
+            }
+        }
+        get("/adoptionrequests/{petId}") {
+            val petId = call.parameters["petId"]?.toIntOrNull()
+            if (petId == null) {
+                call.respondText("Invalid petId", status = HttpStatusCode.BadRequest)
+                return@get
+            }
+            val adoptionRequests = petsRepository.getAdoptionRequestsForPet(petId)
+            call.respond(adoptionRequests)
+        }
+
     }
-    }
+}
