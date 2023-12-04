@@ -32,5 +32,36 @@ fun Route.requestsRouting(){
             val adoptionRequests = requestsRepository.getAdoptionRequestsForPet(petId)
             call.respond(adoptionRequests)
         }
+
+        get("/{petId}/{username}") {
+            val petId = call.parameters["petId"]?.toIntOrNull()
+            val username = call.parameters["username"]
+            if (petId == null || username.isNullOrBlank()) {
+                call.respondText("Invalid petId or username", status = HttpStatusCode.BadRequest)
+                return@get
+            }
+
+            val requestId = requestsRepository.getAdoptionRequestId(petId, username)
+            if (requestId != null) {
+                call.respond(mapOf("requestId" to requestId))
+            } else {
+                call.respondText("No matching adoption request found", status = HttpStatusCode.NotFound)
+            }
+        }
+
+        delete("/{requestId}") {
+            val requestId = call.parameters["requestId"]?.toIntOrNull()
+            if (requestId == null) {
+                call.respondText("Invalid requestId", status = HttpStatusCode.BadRequest)
+                return@delete
+            }
+
+            val deleted = requestsRepository.deleteAdoptionRequest(requestId)
+            if (deleted) {
+                call.respondText("Adoption request deleted successfully")
+            } else {
+                call.respondText("Failed to delete adoption request", status = HttpStatusCode.InternalServerError)
+            }
+        }
     }
 }

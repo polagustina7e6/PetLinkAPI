@@ -9,4 +9,6 @@ interface RequestsDAO {
     ): AdoptionRequest?
 
     suspend fun getAdoptionRequestsForPet(petId: Int): List<String>
+    suspend fun deleteAdoptionRequest(requestId: Int): Boolean
+    suspend fun getAdoptionRequestId(petId: Int, fullname: String): Int?
 }

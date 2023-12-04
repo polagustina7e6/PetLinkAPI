@@ -48,6 +48,12 @@ class UsersRepository: UsersDAO {
         Users.select { Users.email eq email }.mapNotNull { resultRowToUser(it) }.singleOrNull()
     }
 
+    suspend fun getPhoneByEmail(email: String): String? = dbQuery {
+        Users.select{Users.email eq email}
+            .mapNotNull { it[Users.phone] }
+            .singleOrNull()
+    }
+
     suspend fun verifyUserCredentials(email: String, password: String): Boolean {
         val user = getUserByEmail(email)
         return user?.password == password
