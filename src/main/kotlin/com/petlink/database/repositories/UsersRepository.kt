@@ -70,4 +70,20 @@ class UsersRepository: UsersDAO {
             .mapNotNull { it[Users.id] }
             .singleOrNull() ?: 0
     }
+
+    suspend fun getUserByUserId(id: Int): User? = dbQuery {
+        Users.select { Users.id eq id }
+            .mapNotNull {
+                User(
+                    id = it[Users.id],
+                    name = it[Users.name],
+                    dni = it[Users.dni],
+                    phone = it[Users.phone],
+                    email = it[Users.email],
+                    password = it[Users.password],
+                    imgProfile = it[Users.imgProfile]
+                )
+            }
+            .singleOrNull()
+    }
 }

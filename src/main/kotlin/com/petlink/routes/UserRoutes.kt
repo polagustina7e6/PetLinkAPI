@@ -57,5 +57,14 @@ fun Route.usersRouting(){
             val nameByEmail = usersRepository.getIdByEmail(email)
             call.respond(nameByEmail)
         }
+
+        get("fullUser/{id?}") {
+            if (call.parameters["id"].isNullOrBlank()) {
+                return@get call.respondText("Missing userId", status = HttpStatusCode.BadRequest)
+            }
+            val id = call.parameters["id"]!!
+            val function = usersRepository.getUserByUserId(id.toInt())!!
+            call.respond(User(function.id, function.name, function.dni, function.phone, function.email, function.password, function.imgProfile))
+        }
     }
 }
