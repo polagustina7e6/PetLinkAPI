@@ -3,12 +3,12 @@ package com.petlink.database.repositories
 import com.petlink.database.DatabaseFactory
 import com.petlink.database.DatabaseFactory.dbQuery
 import com.petlink.database.dao.UsersDAO
+import com.petlink.models.Pet
+import com.petlink.models.Pets
 import com.petlink.models.User
 import com.petlink.models.Users
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UsersRepository: UsersDAO {
     fun resultRowToUser(row: ResultRow) = User(
@@ -86,4 +86,17 @@ class UsersRepository: UsersDAO {
             }
             .singleOrNull()
     }
+
+    // En esta función hay que validar si és correcto el formato del email y del phone.
+    override suspend fun updateUsers(userId: Int, newName:String, newPhone:String, newEmail:String): Boolean = dbQuery {
+        val updateStatement = Users.update({ Users.id eq userId }) {
+            it[Users.name] = newName
+            it[Users.phone] = newPhone
+            it[Users.email] = newEmail
+        }
+
+        updateStatement > 0
+    }
+
+
 }

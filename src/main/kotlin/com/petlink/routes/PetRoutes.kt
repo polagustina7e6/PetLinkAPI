@@ -49,6 +49,7 @@ fun Route.petsRouting(){
             )
             call.respondText("Se ha registrado correctamente")
         }
+
         get("/bybreed/{breed}") {
             val breed = call.parameters["breed"]
             if (breed.isNullOrBlank()) {
@@ -58,6 +59,57 @@ fun Route.petsRouting(){
             call.respond(petsByBreed)
         }
 
+        put("/{petId}/adoption/{newStatus}") {
+            val petId = call.parameters["petId"]?.toIntOrNull()
+            val newStatus = call.parameters["newStatus"]?.toBoolean()
+
+            if (petId == null || newStatus == null) {
+                call.respondText("Invalid parameters", status = HttpStatusCode.BadRequest)
+                return@put
+            }
+
+            val updatedPet = petsRepository.updateAdoptionStatus(petId, newStatus)
+
+            if (updatedPet != null) {
+                call.respond(updatedPet)
+            } else {
+                call.respondText("Pet not found", status = HttpStatusCode.NotFound)
+            }
+        }
+
+        put("/{petId}/adoption/{userId}"){
+            val petId = call.parameters["petId"]?.toIntOrNull()
+            val newUser = call.parameters["userId"]?.toIntOrNull()
+
+            if (petId == null || newUser == null) {
+                call.respondText("Invalid parameters", status = HttpStatusCode.BadRequest)
+                return@put
+            }
+
+            val updatedOwner = petsRepository.updateOwnerPet(petId, newUser)
+
+            if (updatedOwner != null) {
+                call.respond(updatedOwner)
+            } else {
+                call.respondText("User not found", status = HttpStatusCode.NotFound)
+            }
+        }
+
+        put("/{petId}/castrated/{castratedStatus}"){
+            val petId = call.parameters["petId"]?.toIntOrNull()
+            val castratedStatus = call.parameters["castratedStatus"]?.toBoolean()
+            if (petId == null || castratedStatus == null) {
+                call.respondText("Invalid parameters", status = HttpStatusCode.BadRequest)
+                return@put
+            }
+
+            val updatedPet = petsRepository.updateCastratedStatus(petId, castratedStatus)
+            if (updatedPet != null){
+                call.respond(updatedPet)
+            } else{
+                call.respondText("Pet not found", status = HttpStatusCode.NotFound)
+            }
+        }
 
     }
 }

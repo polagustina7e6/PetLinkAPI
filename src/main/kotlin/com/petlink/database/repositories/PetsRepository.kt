@@ -68,5 +68,27 @@ class PetsRepository : PetsDAO {
         Pets.select { Pets.breed.lowerCase() like "%${breed.lowercase()}%" }.map(::resultRowToPet)
     }
 
+    override suspend fun updateAdoptionStatus(petId: Int, newStatus: Boolean): Pet? = dbQuery {
+        Pets.update({ Pets.id eq petId }) {
+            it[Pets.inAdoption] = newStatus
+        }
+        Pets.select { Pets.id eq petId }.mapNotNull(::resultRowToPet).singleOrNull()
+    }
+
+    override suspend fun updateOwnerPet(petId: Int, userId: Int) {
+        Pets.update({Pets.id eq petId}) {
+            it[Pets.userId] = userId
+        }
+        Pets.select { Pets.id eq petId }.mapNotNull(::resultRowToPet).singleOrNull()
+    }
+
+    override suspend fun updateCastratedStatus(petId: Int, castratedStatus: Boolean): Pet? = dbQuery{
+        Pets.update({Pets.id eq petId}) {
+            it[Pets.castrated] = castratedStatus
+        }
+        Pets.select { Pets.id eq petId }.mapNotNull(::resultRowToPet).singleOrNull()
+    }
+
+
 
 }

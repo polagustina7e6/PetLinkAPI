@@ -2,10 +2,7 @@ package com.petlink.routes
 
 import com.petlink.database.repositories.PetsRepository
 import com.petlink.database.repositories.UsersRepository
-import com.petlink.models.Pet
-import com.petlink.models.User
-import com.petlink.models.UserAuth
-import com.petlink.models.Users
+import com.petlink.models.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -66,5 +63,24 @@ fun Route.usersRouting(){
             val function = usersRepository.getUserByUserId(id.toInt())!!
             call.respond(User(function.id, function.name, function.dni, function.phone, function.email, function.password, function.imgProfile))
         }
+
+        put("/{id}") {
+            val userId = call.parameters["id"]?.toIntOrNull()
+            if (userId == null) {
+                call.respondText("User ID not found", status = HttpStatusCode.NotFound)
+                return@put
+            }
+
+            val updatedUser = call.receive<UserUpdateInfo>()
+            val success = usersRepository.updateUsers(userId, updatedUser.name, updatedUser.phone, updatedUser.email)
+
+            if (success) {
+                call.respondText("User information updated successfully")
+            } else {
+                call.respondText("Failed to update user information", status = HttpStatusCode.InternalServerError)
+            }
+        }
+
+
     }
 }
