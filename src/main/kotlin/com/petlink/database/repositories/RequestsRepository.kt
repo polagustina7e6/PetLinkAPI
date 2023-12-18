@@ -1,6 +1,7 @@
 package com.petlink.database.repositories
 
 import com.petlink.database.DatabaseFactory
+import com.petlink.database.DatabaseFactory.dbQuery
 import com.petlink.database.dao.RequestsDAO
 import com.petlink.models.AdoptionRequest
 import com.petlink.models.AdoptionRequests
@@ -36,7 +37,7 @@ class RequestsRepository: RequestsDAO {
         }
     }
 
-    override suspend fun getAdoptionRequestsForPet(petId: Int) {
+    override suspend fun getAdoptionRequestsForPet(petId: Int) : List<AdoptionRequest> = dbQuery {
         AdoptionRequests.select { AdoptionRequests.petId eq petId }.map(::resultRowToAdoptionRequest)
     }
 

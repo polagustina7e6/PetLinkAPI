@@ -36,6 +36,10 @@ Content-Type: application/json
   "requestingUserId": 9,
   "petId": 2
 }
+
+###
+PUT http://127.0.0.1:8080/pets/2/adoption/true
+
 ###
 GET http://127.0.0.1:8080/pets/bybreed/labrador
 ###

@@ -26,7 +26,7 @@ object Pets : Table(){
     val gender = varchar("pet_gender", 6)
     val breed = varchar("pet_breed", 50)
     val castrated = bool("pet_castrated")
-    val medHistId = varchar("pet_med_hist_id", 50)
+    val medHistId = varchar("pet_med_hist_id", 255)
     val imgId = varchar("pet_img_id", 255)
 
 

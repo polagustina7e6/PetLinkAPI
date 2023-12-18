@@ -47,23 +47,6 @@ fun Route.requestsRouting(){
             call.respond(getExistingRequest)
         }
 
-        /*
-        get("/{petId}/{username}") {
-            val petId = call.parameters["petId"]?.toIntOrNull()
-            val username = call.parameters["username"]
-            if (petId == null || username.isNullOrBlank()) {
-                call.respondText("Invalid petId or username", status = HttpStatusCode.BadRequest)
-                return@get
-            }
-
-            val requestId = requestsRepository.getAdoptionRequestId(petId, username)
-            if (requestId != null) {
-                call.respond(mapOf("requestId" to requestId))
-            } else {
-                call.respondText("No matching adoption request found", status = HttpStatusCode.NotFound)
-            }
-        }*/
-
         delete("/{userId}/{petId}") {
             val userId = call.parameters["userId"]?.toIntOrNull()
             val petId = call.parameters["petId"]?.toIntOrNull()

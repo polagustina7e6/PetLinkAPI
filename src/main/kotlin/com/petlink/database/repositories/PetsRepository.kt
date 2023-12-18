@@ -68,11 +68,21 @@ class PetsRepository : PetsDAO {
         Pets.select { Pets.breed.lowerCase() like "%${breed.lowercase()}%" }.map(::resultRowToPet)
     }
 
-    override suspend fun updateAdoptionStatus(petId: Int, newStatus: Boolean): Pet? = dbQuery {
-        Pets.update({ Pets.id eq petId }) {
-            it[Pets.inAdoption] = newStatus
+    override suspend fun updateAdoptionStatus(petId: Int, newStatus: Boolean): Boolean = dbQuery {
+        val originalStatus = Pets.select { Pets.id eq petId }.mapNotNull { it[Pets.inAdoption] }.singleOrNull()
+
+        if (originalStatus != null) {
+            if (originalStatus != newStatus) {
+                Pets.update({ Pets.id eq petId }) {
+                    it[Pets.inAdoption] = newStatus
+                }
+                true
+            } else {
+                false
+            }
+        } else {
+            false
         }
-        Pets.select { Pets.id eq petId }.mapNotNull(::resultRowToPet).singleOrNull()
     }
 
     override suspend fun updateOwnerPet(petId: Int, userId: Int) {

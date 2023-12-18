@@ -82,6 +82,7 @@ fun Route.petsRouting(){
             val petId = call.parameters["petId"]?.toIntOrNull()
             val newUser = call.parameters["userId"]?.toIntOrNull()
 
+
             if (petId == null || newUser == null) {
                 call.respondText("Invalid parameters", status = HttpStatusCode.BadRequest)
                 return@put

@@ -18,7 +18,7 @@ interface PetsDAO {
     suspend fun getPets(): List<Pet>
     suspend fun getPetsInAdoption(): List<Pet>
     suspend fun getPetsByUserId(userId: Int): List<Pet>
-    suspend fun updateAdoptionStatus(petId: Int, status: Boolean): Pet?
+    suspend fun updateAdoptionStatus(petId: Int, status: Boolean): Boolean
     suspend fun updateOwnerPet(petId: Int, userId: Int)
     suspend fun updateCastratedStatus(petId: Int, status: Boolean): Pet?
 }
