@@ -4,6 +4,8 @@ import com.petlink.database.DatabaseFactory
 import com.petlink.database.dao.RequestsDAO
 import com.petlink.models.AdoptionRequest
 import com.petlink.models.AdoptionRequests
+import com.petlink.models.Pets
+import com.petlink.models.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -13,40 +15,34 @@ import kotlin.math.absoluteValue
 class RequestsRepository: RequestsDAO {
     private fun resultRowToAdoptionRequest(row: ResultRow) = AdoptionRequest(
         id = row[AdoptionRequests.id],
-        fullname = row[AdoptionRequests.fullname],
+        requestingUserId = row[AdoptionRequests.requestingUserId],
         petId = row[AdoptionRequests.petId]
     )
 
-    override suspend fun insertAdoptionRequest(fullname: String, petId: Int): AdoptionRequest? =
+    override suspend fun insertAdoptionRequest(requestingUserId: Int, petId: Int): Boolean {
         DatabaseFactory.dbQuery {
             val insertStatement = AdoptionRequests.insert {
-                it[AdoptionRequests.fullname] = fullname
+                it[AdoptionRequests.requestingUserId] = requestingUserId
                 it[AdoptionRequests.petId] = petId
             }
             insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToAdoptionRequest)
         }
-
-    override suspend fun getAdoptionRequestId(petId: Int, fullname: String): Int? = DatabaseFactory.dbQuery {
-        try {
-            AdoptionRequests
-                .select { (AdoptionRequests.petId eq petId) and (AdoptionRequests.fullname.lowerCase() eq fullname.lowercase())}
-                .singleOrNull()?.get(AdoptionRequests.id)
-        } catch (e: Exception) {
-            println("Error en la obtención del ID de solicitud de adopción: $e")
-            e.printStackTrace()
-            null
-        }
-
+        return true
     }
 
-    override suspend fun deleteAdoptionRequest(requestId: Int): Boolean {
+    override suspend fun deleteAdoptionRequest(requestingUserId: Int, petId: Int): Boolean {
         return transaction {
-            AdoptionRequests.deleteWhere { AdoptionRequests.id eq requestId } > 0
+            AdoptionRequests.deleteWhere { AdoptionRequests.requestingUserId eq requestingUserId and(AdoptionRequests.petId eq petId) } > 0
         }
     }
-    override suspend fun getAdoptionRequestsForPet(petId: Int): List<String> = DatabaseFactory.dbQuery {
-        AdoptionRequests.select { AdoptionRequests.petId eq petId }
-            .map { it[AdoptionRequests.fullname] }
+
+    override suspend fun getAdoptionRequestsForPet(petId: Int) {
+        AdoptionRequests.select { AdoptionRequests.petId eq petId }.map(::resultRowToAdoptionRequest)
     }
 
+    override suspend fun existsAdoptionRequest(petId: Int, requestingUserId: Int): Boolean {
+         return transaction {
+             AdoptionRequests.select { AdoptionRequests.petId eq petId and(AdoptionRequests.requestingUserId eq requestingUserId) }.count() > 0
+         }
     }
+}
