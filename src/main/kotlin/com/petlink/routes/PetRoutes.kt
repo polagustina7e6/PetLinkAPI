@@ -92,7 +92,7 @@ fun Route.petsRouting(){
             }
         }
 
-        put("/{petId}/adoption/{userId}"){
+        put("/{petId}/updatePetOwner/{userId}"){
             val petId = call.parameters["petId"]?.toIntOrNull()
             val newUser = call.parameters["userId"]?.toIntOrNull()
 
