@@ -60,6 +60,20 @@ fun Route.petsRouting(){
             call.respond(petsByBreed)
         }
 
+        get("/inadoption/{userId?}") {
+            val userId = call.parameters["userId"]
+            if (userId.isNullOrBlank()) {
+                return@get call.respondText("Missing id parameter", status = HttpStatusCode.BadRequest)
+            }
+            val pets = petsRepository.getPetsInAdoptionByUserId(userId.toInt())
+            call.respond(pets)
+        }
+
+        get("/getLastPetId") {
+            val id = petsRepository.getLastPetId()
+            call.respond(id!!)
+        }
+
         put("/{petId}/adoption/{newStatus}") {
             val petId = call.parameters["petId"]?.toIntOrNull()
             val newStatus = call.parameters["newStatus"]?.toBoolean()
@@ -71,7 +85,11 @@ fun Route.petsRouting(){
 
             val updatedPet = petsRepository.updateAdoptionStatus(petId, newStatus)
 
-            call.respond(updatedPet)
+            if (updatedPet != null) {
+                call.respond(updatedPet)
+            } else {
+                call.respondText("Pet not found", status = HttpStatusCode.NotFound)
+            }
         }
 
         put("/{petId}/adoption/{userId}"){
@@ -86,6 +104,8 @@ fun Route.petsRouting(){
 
             val updatedOwner = petsRepository.updateOwnerPet(petId, newUser)
 
+            print(call.parameters["petId"]!!.toInt())
+            print(call.parameters["userId"]!!.toInt())
             call.respond(updatedOwner)
         }
 

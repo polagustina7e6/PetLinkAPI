@@ -46,4 +46,5 @@ class RequestsRepository: RequestsDAO {
              AdoptionRequests.select { AdoptionRequests.petId eq petId and(AdoptionRequests.requestingUserId eq requestingUserId) }.count() > 0
          }
     }
+
 }

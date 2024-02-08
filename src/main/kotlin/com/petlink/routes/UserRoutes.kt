@@ -81,6 +81,13 @@ fun Route.usersRouting(){
             }
         }
 
-
+        get("fullUserRequestByPet/{petId?}") {
+            if (call.parameters["petId"].isNullOrBlank()) {
+                return@get call.respondText("Missing userId", status = HttpStatusCode.BadRequest)
+            }
+            val id = call.parameters["petId"]!!
+            val function = usersRepository.getUsersFromPetIdRequest(id.toInt())
+            call.respond(function)
+        }
     }
 }

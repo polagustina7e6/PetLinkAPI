@@ -13,6 +13,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class PetsRepository : PetsDAO {
     private fun resultRowToPet(row: ResultRow) = Pet(
@@ -61,10 +62,26 @@ class PetsRepository : PetsDAO {
         Pets.select { Pets.inAdoption eq Op.TRUE }.map(::resultRowToPet)
     }
 
+    override suspend fun getLastPetId(): Int? = dbQuery {
+        val resultRow = transaction {
+            Pets.selectAll()
+                .orderBy(Pets.id, SortOrder.DESC)
+                .limit(1)
+                .singleOrNull()
+        }
+        resultRow?.get(Pets.id)
+    }
 
 
     override suspend fun getPetsByUserId(userId: Int): List<Pet> = dbQuery {
         Pets.select {Pets.userId eq userId}.map(::resultRowToPet)
+    }
+
+    override suspend fun getPetsInAdoptionByUserId(userId: Int): List<Pet> {
+        return transaction {
+            Pets.select { (Pets.userId eq userId) and (Pets.inAdoption eq true) }
+                .map(::resultRowToPet)
+        }
     }
     suspend fun getPetsByBreed(breed: String): List<Pet> = dbQuery {
         Pets.select { Pets.breed.lowerCase() like "%${breed.lowercase()}%" }.map(::resultRowToPet)
@@ -87,12 +104,16 @@ class PetsRepository : PetsDAO {
         }
     }
 
-    override suspend fun updateOwnerPet(petId: Int, userId: Int) {
-        Pets.update({Pets.id eq petId}) {
-            it[Pets.userId] = userId
+    override suspend fun updateOwnerPet(petId: Int, userId: Int): Boolean = dbQuery {
+        transaction {
+            val updatedRows = Pets.update({ Pets.id eq petId }) {
+                it[Pets.userId] = userId
+                it[Pets.inAdoption] = false
+            }
+            updatedRows > 0
         }
-        Pets.select { Pets.id eq petId }.mapNotNull(::resultRowToPet).singleOrNull()
     }
+
 
     override suspend fun updateCastratedStatus(petId: Int, castratedStatus: Boolean): Pet? = dbQuery{
         Pets.update({Pets.id eq petId}) {

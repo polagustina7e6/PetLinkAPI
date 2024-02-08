@@ -2,6 +2,7 @@ package com.petlink.database.dao
 
 import com.petlink.models.AdoptionRequest
 import com.petlink.models.AdoptionRequests
+import com.petlink.models.Users
 
 interface RequestsDAO {
     suspend fun insertAdoptionRequest(requestingUserId: Int, petId: Int): Boolean

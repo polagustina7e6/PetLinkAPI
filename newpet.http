@@ -38,7 +38,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://127.0.0.1:8080/pets/2/adoption/true
+PUT http://127.0.0.1:8080/pets/7/updatePetOwner/9
 
 ###
 GET http://127.0.0.1:8080/pets/bybreed/labrador

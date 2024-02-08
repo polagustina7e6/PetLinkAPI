@@ -46,7 +46,7 @@ fun Route.requestsRouting(){
             val getExistingRequest = requestsRepository.existsAdoptionRequest(petId, userId)
             call.respond(getExistingRequest)
         }
-
+        
         delete("/{userId}/{petId}") {
             val userId = call.parameters["userId"]?.toIntOrNull()
             val petId = call.parameters["petId"]?.toIntOrNull()

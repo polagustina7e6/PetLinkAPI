@@ -3,12 +3,10 @@ package com.petlink.database.repositories
 import com.petlink.database.DatabaseFactory
 import com.petlink.database.DatabaseFactory.dbQuery
 import com.petlink.database.dao.UsersDAO
-import com.petlink.models.Pet
-import com.petlink.models.Pets
-import com.petlink.models.User
-import com.petlink.models.Users
+import com.petlink.models.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class UsersRepository: UsersDAO {
     fun resultRowToUser(row: ResultRow) = User(
@@ -98,5 +96,10 @@ class UsersRepository: UsersDAO {
         updateStatement > 0
     }
 
-
+    override suspend fun getUsersFromPetIdRequest(petId: Int): List<User> {
+        return transaction {
+            Users.select { Users.id inSubQuery AdoptionRequests.slice(AdoptionRequests.requestingUserId).select { AdoptionRequests.petId eq petId } }
+                .map { resultRowToUser(it) }
+        }
+    }
 }
