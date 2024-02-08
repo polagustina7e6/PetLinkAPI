@@ -71,11 +71,7 @@ fun Route.petsRouting(){
 
             val updatedPet = petsRepository.updateAdoptionStatus(petId, newStatus)
 
-            if (updatedPet != null) {
-                call.respond(updatedPet)
-            } else {
-                call.respondText("Pet not found", status = HttpStatusCode.NotFound)
-            }
+            call.respond(updatedPet)
         }
 
         put("/{petId}/adoption/{userId}"){
@@ -90,11 +86,7 @@ fun Route.petsRouting(){
 
             val updatedOwner = petsRepository.updateOwnerPet(petId, newUser)
 
-            if (updatedOwner != null) {
-                call.respond(updatedOwner)
-            } else {
-                call.respondText("User not found", status = HttpStatusCode.NotFound)
-            }
+            call.respond(updatedOwner)
         }
 
         put("/{petId}/castrated/{castratedStatus}"){
@@ -112,6 +104,34 @@ fun Route.petsRouting(){
                 call.respondText("Pet not found", status = HttpStatusCode.NotFound)
             }
         }
+
+        get("/bytype/{type}"){
+            val type = call.parameters["type"]
+            if (type.isNullOrBlank()) {
+                return@get call.respondText("Missing breed parameter", status = HttpStatusCode.BadRequest)
+            }
+            val petsByBreed = petsRepository.getPetsByType(type.lowercase())
+            call.respond(petsByBreed)
+
+        }
+
+        get("/{petId}/medHistId"){
+            val petId = call.parameters["petId"]?.toIntOrNull()
+            if (petId != null) {
+                val medHistId = petsRepository.getMedFromPet(petId)
+                if (medHistId != null) {
+                    call.respond(mapOf("medHistId" to medHistId))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Pet not found")
+                }
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid petId")
+            }
+        }
+
+
+
+
 
 
     }

@@ -61,6 +61,8 @@ class PetsRepository : PetsDAO {
         Pets.select { Pets.inAdoption eq Op.TRUE }.map(::resultRowToPet)
     }
 
+
+
     override suspend fun getPetsByUserId(userId: Int): List<Pet> = dbQuery {
         Pets.select {Pets.userId eq userId}.map(::resultRowToPet)
     }
@@ -99,6 +101,14 @@ class PetsRepository : PetsDAO {
         Pets.select { Pets.id eq petId }.mapNotNull(::resultRowToPet).singleOrNull()
     }
 
+    override suspend fun getPetsByType(type: String): List<Pet> = dbQuery {
+        Pets.select { Pets.type.lowerCase() eq type }.map(::resultRowToPet)
+    }
 
-
+    override suspend fun getMedFromPet(petId: Int): String? = dbQuery {
+        Pets
+            .select{Pets.id eq petId}
+            .mapNotNull { it[Pets.medHistId] }
+            .singleOrNull()
+    }
 }
