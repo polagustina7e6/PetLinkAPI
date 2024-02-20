@@ -46,3 +46,7 @@ GET http://127.0.0.1:8080/pets/bybreed/labrador
 GET http://127.0.0.1:8080/pets/bybreed/lab
 ###
 GET http://127.0.0.1:8080/adoptionrequests/exist/2/9
+###
+GET http://127.0.0.1:8080/videos
+###
+GET http://127.0.0.1:8080/pets

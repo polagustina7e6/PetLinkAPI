@@ -148,11 +148,5 @@ fun Route.petsRouting(){
                 call.respond(HttpStatusCode.BadRequest, "Invalid petId")
             }
         }
-
-
-
-
-
-
     }
 }
