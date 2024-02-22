@@ -9,6 +9,7 @@ fun Application.configureRouting() {
     routing {
         petsRouting()
         petsAdditionalInfoRouting()
+        userAdditionalInfoRouting()
         requestsRouting()
         usersRouting()
         videosRouting()

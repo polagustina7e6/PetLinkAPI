@@ -64,6 +64,15 @@ fun Route.usersRouting(){
             call.respond(User(function.id, function.name, function.dni, function.phone, function.email, function.password, function.imgProfile))
         }
 
+        get("emailInUse/{email?}") {
+            if (call.parameters["email"].isNullOrBlank()) {
+                return@get call.respondText("Missing email", status = HttpStatusCode.BadRequest)
+            }
+            val email = call.parameters["email"]
+            val function = usersRepository.checkIfInputEmailExists(email.toString())
+            call.respond(function)
+        }
+
         put("/{id}") {
             val userId = call.parameters["id"]?.toIntOrNull()
             if (userId == null) {

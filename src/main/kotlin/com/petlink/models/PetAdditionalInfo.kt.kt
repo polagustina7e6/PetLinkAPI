@@ -13,7 +13,7 @@ data class PetAdditionalInfo(
     val description: String
 )
 
-object additional_info_pet : Table(){
+object AdditionalInfoPet : Table(){
     val id = integer("id").autoIncrement()
     val petId = integer("info_pet_id")
     val age = integer("age")

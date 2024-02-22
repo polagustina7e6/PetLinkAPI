@@ -8,4 +8,5 @@ interface UsersDAO {
     suspend fun getUsers(): List<User>
     suspend fun updateUsers(userid: Int, name:String, phone:String, email:String): Boolean
     suspend fun getUsersFromPetIdRequest(petId: Int): List<User>
+    suspend fun checkIfInputEmailExists(email: String): Boolean
 }

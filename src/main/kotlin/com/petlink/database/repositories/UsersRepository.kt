@@ -102,4 +102,11 @@ class UsersRepository: UsersDAO {
                 .map { resultRowToUser(it) }
         }
     }
+
+    override suspend fun checkIfInputEmailExists(email: String): Boolean {
+        return transaction {
+            Users.select { Users.email eq email }
+                .count() > 0
+        }
+    }
 }
